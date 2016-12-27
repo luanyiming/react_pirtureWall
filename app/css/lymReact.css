@@ -1,0 +1,35 @@
+html, body, div, section, figure{
+    padding: 0;
+    margin: 0;
+}
+
+body {
+    font: 12px/1.3 'Arial','Microsoft YaHei';
+    background: #fff;
+}
+.stage{
+    background-color: #ccc;
+    width: 100%;
+    position: relative;
+    height: 700px;
+}
+.img_sec{
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+.img_fig{
+    position: absolute;
+    width: 320px;
+    height: 360px;
+    margin: 0;
+    padding: 40px;
+    box-sizing: border-box;
+    background-color: #fff;
+}
+.img_title{
+    text-align: center;
+    font-size: 16px;
+    color: #aaa;
+    margin: 20px 0 0 0;
+}
