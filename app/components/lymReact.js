@@ -1,4 +1,5 @@
 var React = require('react');
+var ReactDOM = require('react-dom');
 var style = require("../css/lymReact.css");
 var imgData = require('../imageDatas.json');
 //获取图片的url
@@ -9,6 +10,10 @@ var imgData = require('../imageDatas.json');
 		img[i] = singleImg;
 	}
 })(imgData);
+/*获取图片的top,left随机数值*/
+function getRangeRandom(low,high){
+	return Math.ceil(Math.random() * (high - low) + low);
+}
 //单个图片组件
 var ImgFigure = React.createClass({
 	render:function(){
@@ -57,15 +62,26 @@ var Stage = React.createClass({
   			vPosRangeX = vPosRange.x,
   			vPosRangeTopY = vPosRange.topY,
   			imgsArrangeTopArr = [],
-  			topImgNum = Math.ceil(Math.random() * 2), //取一个或者不取
+  			topImgNum = Math.ceil(Math.random() * 2), //取0或者1个图片位于上部
   			topImgSpliceIndex = 0,
   			imgsArrangeCenterArr = imgsArrangeArr.splice(centerIndex,1);
-  			//居中centerIndex图片 
+  			//布局centerIndex图片剧中 
   			imgsArrangeCenterArr[0].pos = centerPos;
+  			//取出上部图片的信息
+  			topImgSpliceIndex = Math.ceil(Math.random() * (imgsArrangeArr.length - topImgNum));
+  			imgsArrangeTopArr = imgsArrangeArr.splice(topImgSpliceIndex,topImgNum);
+  			//布局上部的0或者1个图片
+  			imgsArrangeTopArr.forEach(function(value,index){
+  				imgsArrangeTopArr[index].pos = {
+  					left: getRangeRandom(vPosRangeX[0],vPosRangeX[1]),
+  					top: getRangeRandom(vPosRangeTopY[0],vPosRangeTopY[1])
+  				}
+  			})
+  			//console.log(imgsArrangeTopArr);
 
   	},
   	//组件加载后计算图片的pos位置
-  	componentDidMount:function(){
+  	componentDidMount :function(){
   		//高版本react不需要使用findDOMNode,获取舞台大小
   		var stageDOM = this.refs.stage, 
   			stageW = stageDOM.scrollWidth,
@@ -73,7 +89,7 @@ var Stage = React.createClass({
   			halfStageW = Math.ceil(stageW / 2),
   			halfStageH = Math.ceil(stageH / 2);
 		//获取单个图片大小
-		var imgFigureDOM = this.refs.imgFigure0,
+		var imgFigureDOM = ReactDOM.findDOMNode(this.refs.ImgFigure0),
 			imgW = imgFigureDOM.scrollWidth,
 			imgH = imgFigureDOM.scrollHeight,
 			halfImgW = Math.ceil(imgW / 2),
@@ -95,6 +111,8 @@ var Stage = React.createClass({
 		this.content.vPosRange.x[0] = halfStageW - imgW;
 		this.content.vPosRange.x[1] = halfStageW;
 		this.rearrange(0);
+		console.log(this.content)
+
   	},
   render: function () {
   	var controllerUnits = [],
@@ -108,7 +126,7 @@ var Stage = React.createClass({
 				}
 			}
 		}
-		imgFigure.push(<ImgFigure data={value} key={index} ref={'imgFigure' + index} />);
+		imgFigure.push(<ImgFigure data={value} key={index} ref={'ImgFigure' + index} />);
 	}.bind(this));
     return (
   		<section className='stage' ref='stage'>
