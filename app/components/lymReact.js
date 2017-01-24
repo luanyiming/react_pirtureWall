@@ -17,8 +17,13 @@ function getRangeRandom(low,high){
 //单个图片组件
 var ImgFigure = React.createClass({
 	render:function(){
+		var styleObj = {};
+		//如果props有图片的位置信息，就使用它
+		if (this.props.arrange.pos) {
+			styleObj = this.props.arrange.pos;
+		}
 		return(
-			<figure className='img_fig'>
+			<figure className='img_fig' style={styleObj}>
 				<img src={this.props.data.url} />
 				<figcaption>
 					<h2 className='img_title'>{this.props.data.title}</h2>
@@ -77,7 +82,27 @@ var Stage = React.createClass({
   					top: getRangeRandom(vPosRangeTopY[0],vPosRangeTopY[1])
   				}
   			})
-  			//console.log(imgsArrangeTopArr);
+		//布局左右两侧的图片
+		for(var i = 0,j = imgsArrangeArr.length,k = j / 2;i  <j;i++){
+			var hPosRangeLORX = null;
+			//前半部分在左边 后半部分在右边
+			if (i < k) {
+				hPosRangeLORX = hPosRangLeftSecX;
+			}else{
+				hPosRangeLORX = hPosRangRightSecX;
+			}
+			imgsArrangeArr[i].pos = {
+				top: getRangeRandom(hPosRangeY[0],hPosRangeY[1]),
+				left:getRangeRandom(hPosRangeLORX[0],hPosRangeLORX[1])
+			}
+		}
+		if (imgsArrangeTopArr && imgsArrangeTopArr[0]) {
+			imgsArrangeArr.splice(topImgSpliceIndex,0,imgsArrangeTopArr[0]);
+		}
+		imgsArrangeArr.splice(centerIndex,0,imgsArrangeCenterArr[0]);
+		this.setState({
+			imgsArrangeArr: imgsArrangeArr
+		});
 
   	},
   	//组件加载后计算图片的pos位置
@@ -126,7 +151,7 @@ var Stage = React.createClass({
 				}
 			}
 		}
-		imgFigure.push(<ImgFigure data={value} key={index} ref={'ImgFigure' + index} />);
+		imgFigure.push(<ImgFigure arrange={this.state.imgsArrangeArr[index]} data={value} key={index} ref={'ImgFigure' + index} />);
 	}.bind(this));
     return (
   		<section className='stage' ref='stage'>
